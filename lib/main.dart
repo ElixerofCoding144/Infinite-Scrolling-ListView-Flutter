@@ -8,6 +8,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Startup Name Generator',
+      theme: ThemeData(          // Add the 3 lines from here... 
+        primaryColor: Colors.greenAccent,
+      ), 
       home: RandomWords(),
     );
   }
@@ -30,11 +33,46 @@ class _RandomWordsState extends State<RandomWords> {
   final _saved = <WordPair>{};  //NEW
   final _biggerFont = const TextStyle(fontSize: 18); 
   
+  void _pushSaved() {
+    //Navigator adds a "Back" button to the app bar. 
+    //You did not have to explicitly implement Navigator.pop.
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        // NEW lines from here...
+        builder: (BuildContext context) {
+          final tiles = _saved.map(
+            (WordPair pair) {
+              return ListTile(
+                title: Text(
+                  pair.asPascalCase,
+                  style: _biggerFont,
+                ),
+              );
+            },
+          );
+          final divided = tiles.isNotEmpty
+              ? ListTile.divideTiles(context: context, tiles: tiles).toList()
+              : <Widget>[];
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Saved Suggestions'),
+            ),
+            body: ListView(children: divided),
+          );
+        }, // ...to here.
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold (                     // Add from here... 
       appBar: AppBar(
         title: Text('Startup Name Generator'),
+        actions: [
+          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),//_pushSaved needs to be defined
+        ],
       ),
       body: _buildSuggestions(),
     );                                      // ... to here.
