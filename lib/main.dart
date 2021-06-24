@@ -23,8 +23,12 @@ class RandomWords extends StatefulWidget {
 }
 //By default, the name of the State class is prefixed with an underscore.
 class _RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];                 // NEW
-  final _biggerFont = const TextStyle(fontSize: 18); // NEW
+  final _suggestions = <WordPair>[];   
+  //This Set stores the word pairings that the user favorited. 
+  //Set is preferred to List because a properly implemented Set 
+  //doesn't allow duplicate entries.              
+  final _saved = <WordPair>{};  //NEW
+  final _biggerFont = const TextStyle(fontSize: 18); 
   
   @override
   Widget build(BuildContext context){
@@ -37,11 +41,18 @@ class _RandomWordsState extends State<RandomWords> {
   } 
   
     Widget _buildRow(WordPair pair) {
+  //In the _buildRow function, add an alreadySaved check to 
+  //ensure that a word pairing has not already been added to favorites.      
+    final alreadySaved = _saved.contains(pair);  // NEW  
     return ListTile(
       title: Text(
         pair.asPascalCase,
         style: _biggerFont,
       ),
+      trailing: Icon(   // NEW from here... 
+      alreadySaved ? Icons.favorite : Icons.favorite_border,
+      color: alreadySaved ? Colors.red : null,
+    ),
     );
 }
 
